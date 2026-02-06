@@ -1,7 +1,7 @@
 {
-  "name": "user-auth-backend",
+  "name": "super-splender-backend",
   "version": "1.0.0",
-  "description": "Backend for user authentication app",
+  "description": "Backend for Super Splender - Super App",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",

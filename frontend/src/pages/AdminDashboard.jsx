@@ -83,7 +83,7 @@ const AdminDashboard = () => {
             💰 Pricing
           </button>
           <button 
-            onClick={() => navigate('/admin/company')} 
+            onClick={() => navigate('/admin/settings')} 
             style={{width: 'auto', marginRight: '10px', background: '#28a745'}}
           >
             Company Settings

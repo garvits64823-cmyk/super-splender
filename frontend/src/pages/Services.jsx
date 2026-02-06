@@ -29,28 +29,28 @@ const Services = () => {
       name: 'Food Delivery',
       icon: '🍔',
       description: 'Order food from restaurants',
-      route: '/services/food-delivery'
+      route: '/food-delivery'
     },
     {
       id: 2,
       name: 'Grocery Pickup',
       icon: '🛒',
       description: 'Get groceries delivered',
-      route: '/services/grocery-pickup'
+      route: '/grocery-pickup'
     },
     {
       id: 3,
       name: 'Parcel Drop',
       icon: '📦',
       description: 'Send parcels anywhere',
-      route: '/services/parcel-drop'
+      route: '/parcel-drop'
     },
     {
       id: 4,
       name: 'Bike Taxi',
       icon: '🏍️',
       description: 'Quick bike rides',
-      route: '/services/bike-taxi'
+      route: '/bike-taxi'
     }
   ];
 

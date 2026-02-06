@@ -877,6 +877,167 @@ app.get('/api/public/profile/:userId', async (req, res) => {
   }
 });
 
+// Get user orders
+app.get('/api/user/orders', userAuth, async (req, res) => {
+  let userId = null;
+  if (req.user.userId) {
+    userId = req.user.userId;
+  } else if (req.user.identifier) {
+    const user = await new Promise((resolve, reject) => {
+      db.get(
+        `SELECT id FROM users WHERE email = ? OR phone = ?`,
+        [req.user.identifier, req.user.identifier],
+        (err, row) => {
+          if (err) reject(err);
+          else resolve(row);
+        }
+      );
+    });
+    userId = user ? user.id : null;
+  }
+
+  if (!userId) {
+    return res.status(400).json({ error: "User not found" });
+  }
+
+  const queries = [
+    { table: 'food_orders', type: 'food-delivery' },
+    { table: 'grocery_orders', type: 'grocery-pickup' },
+    { table: 'parcel_orders', type: 'parcel-drop' },
+    { table: 'bike_taxi_orders', type: 'bike-taxi' }
+  ];
+
+  let allOrders = [];
+  let completedQueries = 0;
+
+  queries.forEach(query => {
+    db.all(`SELECT id, status, created_at, '${query.type}' as service_type FROM ${query.table} WHERE user_id = ? ORDER BY created_at DESC`, 
+      [userId], (err, rows) => {
+        if (!err && rows) {
+          allOrders = allOrders.concat(rows);
+        }
+        completedQueries++;
+        
+        if (completedQueries === queries.length) {
+          res.json(allOrders.sort((a, b) => new Date(b.created_at) - new Date(a.created_at)));
+        }
+      });
+  });
+});
+
+// Get user profile
+app.get('/api/user/profile', userAuth, async (req, res) => {
+  let userId = null;
+  if (req.user.userId) {
+    userId = req.user.userId;
+  } else if (req.user.identifier) {
+    const user = await new Promise((resolve, reject) => {
+      db.get(
+        `SELECT id FROM users WHERE email = ? OR phone = ?`,
+        [req.user.identifier, req.user.identifier],
+        (err, row) => {
+          if (err) reject(err);
+          else resolve(row);
+        }
+      );
+    });
+    userId = user ? user.id : null;
+  }
+
+  if (!userId) {
+    return res.status(400).json({ error: "User not found" });
+  }
+
+  db.get('SELECT user_number, name, email, phone, dateOfBirth, createdAt FROM users WHERE id = ?', [userId], (err, user) => {
+    if (err) {
+      return res.status(500).json({ error: 'Failed to fetch profile' });
+    }
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    res.json(user);
+  });
+});
+
+// Get all orders (Admin only)
+app.get('/api/admin/orders', adminAuth, (req, res) => {
+  const { search, service } = req.query;
+  
+  // Get orders from all service tables
+  const queries = [
+    { table: 'food_orders', type: 'food-delivery', columns: 'pickup_location, drop_location, restaurant_name, order_description' },
+    { table: 'grocery_orders', type: 'grocery-pickup', columns: 'shop_location as pickup_location, drop_location, shop_name as restaurant_name, grocery_list as order_description' },
+    { table: 'parcel_orders', type: 'parcel-drop', columns: 'pickup_location, drop_location, receiver_name as restaurant_name, parcel_description as order_description' },
+    { table: 'bike_taxi_orders', type: 'bike-taxi', columns: 'pickup_location, drop_location, "" as restaurant_name, "" as order_description' }
+  ];
+
+  let allOrders = [];
+  let completedQueries = 0;
+
+  queries.forEach(query => {
+    if (service && service !== query.type) {
+      completedQueries++;
+      if (completedQueries === queries.length) {
+        res.json(allOrders.sort((a, b) => new Date(b.created_at) - new Date(a.created_at)));
+      }
+      return;
+    }
+
+    let sql = `SELECT o.id, o.user_id, o.status, o.created_at, '${query.type}' as service_type, 
+               ${query.columns}, u.name as user_name, u.email as user_email, u.phone as user_phone
+               FROM ${query.table} o 
+               LEFT JOIN users u ON o.user_id = u.id`;
+    
+    let params = [];
+    if (search) {
+      sql += ` WHERE u.name LIKE ? OR u.email LIKE ? OR u.phone LIKE ?`;
+      params = [`%${search}%`, `%${search}%`, `%${search}%`];
+    }
+    
+    sql += ` ORDER BY o.created_at DESC`;
+
+    db.all(sql, params, (err, rows) => {
+      if (!err && rows) {
+        allOrders = allOrders.concat(rows);
+      }
+      completedQueries++;
+      
+      if (completedQueries === queries.length) {
+        res.json(allOrders.sort((a, b) => new Date(b.created_at) - new Date(a.created_at)));
+      }
+    });
+  });
+});
+
+// Get user-specific orders (Admin only)
+app.get('/api/admin/users/:userId/orders', adminAuth, (req, res) => {
+  const { userId } = req.params;
+  
+  const queries = [
+    { table: 'food_orders', type: 'food-delivery' },
+    { table: 'grocery_orders', type: 'grocery-pickup' },
+    { table: 'parcel_orders', type: 'parcel-drop' },
+    { table: 'bike_taxi_orders', type: 'bike-taxi' }
+  ];
+
+  let allOrders = [];
+  let completedQueries = 0;
+
+  queries.forEach(query => {
+    db.all(`SELECT id, status, created_at, '${query.type}' as service_type FROM ${query.table} WHERE user_id = ? ORDER BY created_at DESC`, 
+      [userId], (err, rows) => {
+        if (!err && rows) {
+          allOrders = allOrders.concat(rows);
+        }
+        completedQueries++;
+        
+        if (completedQueries === queries.length) {
+          res.json(allOrders.sort((a, b) => new Date(b.created_at) - new Date(a.created_at)));
+        }
+      });
+  });
+});
+
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });

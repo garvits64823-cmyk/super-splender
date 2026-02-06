@@ -38,6 +38,31 @@ export const authAPI = {
     api.post("/reset-password", { identifier, otp, newPassword }),
 };
 
+export const userAPI = {
+  getProfile: () => api.get("/user/profile"),
+  getOrders: () => api.get("/user/orders"),
+};
+
+export const serviceAPI = {
+  createFoodOrder: (formData) => api.post("/food-order", formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  }),
+
+  createGroceryOrder: (formData) => api.post("/grocery-order", formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  }),
+
+  createParcelOrder: (data) => api.post("/parcel-order", data),
+
+  createBikeTaxiOrder: (data) => api.post("/bike-taxi-order", data),
+
+  getServicePricing: (serviceId) => api.get(`/service-pricing/${serviceId}`),
+};
+
+export const publicAPI = {
+  getPublicProfile: (userId) => api.get(`/public/profile/${userId}`),
+};
+
 export const adminAPI = {
   login: (email, password) => api.post("/admin/login", { email, password }),
 
@@ -48,6 +73,11 @@ export const adminAPI = {
     api.patch(`/admin/users/${id}/block`, { isBlocked }),
 
   deleteUser: (id) => api.delete(`/admin/users/${id}`),
+
+  getOrders: (search = "", service = "") =>
+    api.get(`/admin/orders?search=${search}&service=${service}`),
+
+  getUserOrders: (userId) => api.get(`/admin/users/${userId}/orders`),
 
   getCompanyInfo: () => api.get("/company-info"),
 

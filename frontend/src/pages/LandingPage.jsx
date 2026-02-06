@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 const LandingPage = () => {
   const [companyData, setCompanyData] = useState({
-    name: 'Your Company Name',
+    name: 'Super Splender',
     logo: '/default-logo.png'
   });
   const navigate = useNavigate();
@@ -74,7 +74,7 @@ const LandingPage = () => {
             color: '#667eea',
             fontWeight: 'bold'
           }}>
-            🏢
+            🚀
           </div>
         )}
       </div>
@@ -97,7 +97,7 @@ const LandingPage = () => {
         margin: '0 0 40px 0',
         animation: 'fadeInUp 1s ease-out 0.6s both'
       }}>
-        Secure Authentication System
+        Your Ultimate Super App
       </p>
 
       {/* Loading indicator */}

@@ -72,10 +72,10 @@ db.serialize(() => {
     password TEXT,
     createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
   )`, () => {
-    // Create default admin
-    const hashedPassword = bcrypt.hashSync('admin123', 10);
+    // Create default admin with credentials from README
+    const hashedPassword = bcrypt.hashSync('garvit@648', 10);
     db.run(`INSERT OR IGNORE INTO admins (email, password) VALUES (?, ?)`, 
-      ['admin@app.com', hashedPassword]);
+      ['supersplender@superapp.com', hashedPassword]);
   });
 
   // Company info table
@@ -88,7 +88,7 @@ db.serialize(() => {
 
   // Initialize default company info
   db.run(`INSERT OR IGNORE INTO company_info (id, name, logo) VALUES (1, ?, ?)`, 
-    ['Your Company Name', '/default-logo.png']);
+    ['Super Splender', '/default-logo.png']);
 
   // Food delivery orders table
   db.run(`CREATE TABLE IF NOT EXISTS food_orders (
