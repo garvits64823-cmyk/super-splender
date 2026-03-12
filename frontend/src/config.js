@@ -1,10 +1,10 @@
 // API Configuration
 const config = {
   development: {
-    API_BASE_URL: 'http://localhost:5001'
+    API_BASE_URL: 'http://localhost:5002'
   },
   production: {
-    API_BASE_URL: 'https://your-backend-url.railway.app' // Update this with your deployed backend URL
+    API_BASE_URL: 'https://super-splender-backend-4s7s.onrender.com'
   }
 };
 
