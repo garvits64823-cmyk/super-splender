@@ -26,7 +26,7 @@ const LandingPage = () => {
       const response = await fetch(`${API_BASE_URL}/api/company-info?t=${Date.now()}`);
       if (response.ok) {
         const data = await response.json();
-        console.log('Company data fetched:', data);
+        console.log('Company data fetched:', JSON.stringify(data, null, 2));
         setCompanyData(data);
       } else {
         console.log('API response not ok:', response.status);
