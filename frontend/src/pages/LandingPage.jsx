@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { API_BASE_URL } from '../config.js';
 
 const LandingPage = () => {
   const [companyData, setCompanyData] = useState({
@@ -14,7 +15,7 @@ const LandingPage = () => {
     
     // Auto redirect after 3 seconds
     const timer = setTimeout(() => {
-      navigate('/login');
+      navigate('/enter-name');
     }, 3000);
 
     return () => clearTimeout(timer);
@@ -22,7 +23,7 @@ const LandingPage = () => {
 
   const fetchCompanyData = async () => {
     try {
-      const response = await fetch('http://localhost:5001/api/company-info');
+      const response = await fetch(`${API_BASE_URL}/api/company-info`);
       if (response.ok) {
         const data = await response.json();
         setCompanyData(data);

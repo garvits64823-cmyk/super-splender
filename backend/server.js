@@ -435,12 +435,86 @@ app.delete("/api/admin/users/:id", adminAuth, (req, res) => {
   });
 });
 
+// Get about information
+app.get("/api/about-info", (req, res) => {
+  // Try to get from database first, then use default
+  const defaultAboutData = {
+    title: 'About Super Splender',
+    description: 'Your Ultimate Super App for all daily needs',
+    mission: 'To provide convenient, reliable, and affordable services that make your life easier.',
+    vision: 'To become the most trusted super app connecting people with essential services.',
+    features: [
+      'Food Delivery from your favorite restaurants',
+      'Grocery Pickup and delivery service',
+      'Parcel Drop for quick deliveries',
+      'Bike Taxi for fast transportation'
+    ],
+    contact: {
+      email: 'qoxtransit@gmail.com',
+      phone: '+91 9729832025'
+    },
+    socialMedia: {
+      youtube: 'https://youtube.com/@qoxtransit',
+      instagram: 'https://www.instagram.com/qox.transit',
+      linkedin: 'https://www.linkedin.com/company/qox-transit-private-limited/'
+    }
+  };
+
+  db.get(`SELECT * FROM about_info WHERE id = 1`, (err, row) => {
+    if (err || !row) {
+      return res.json(defaultAboutData);
+    }
+    
+    try {
+      const aboutData = {
+        title: row.title,
+        description: row.description,
+        mission: row.mission,
+        vision: row.vision,
+        features: JSON.parse(row.features || '[]'),
+        contact: JSON.parse(row.contact || '{}'),
+        socialMedia: JSON.parse(row.social_media || '{}')
+      };
+      res.json(aboutData);
+    } catch (parseErr) {
+      res.json(defaultAboutData);
+    }
+  });
+});
+
+// Update about information (Admin only)
+app.put("/api/admin/about-info", adminAuth, (req, res) => {
+  const { title, description, mission, vision, features, contact, socialMedia } = req.body;
+
+  if (!title || !description || !mission || !vision) {
+    return res.status(400).json({ error: 'Title, description, mission, and vision are required' });
+  }
+
+  const featuresJson = JSON.stringify(features || []);
+  const contactJson = JSON.stringify(contact || {});
+  const socialMediaJson = JSON.stringify(socialMedia || {});
+
+  db.run(
+    `INSERT OR REPLACE INTO about_info (id, title, description, mission, vision, features, contact, social_media, updated_at) 
+     VALUES (1, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)`,
+    [title, description, mission, vision, featuresJson, contactJson, socialMediaJson],
+    function (err) {
+      if (err) {
+        console.error('About info update error:', err);
+        return res.status(500).json({ error: 'Failed to update about information' });
+      }
+
+      res.json({ message: 'About information updated successfully' });
+    }
+  );
+});
+
 // Get company information
 app.get("/api/company-info", (req, res) => {
   db.get(`SELECT * FROM company_info WHERE id = 1`, (err, row) => {
     if (err || !row) {
       return res.json({
-        name: "Your Company Name",
+        name: "Super Splender",
         logo: "/default-logo.png",
       });
     }

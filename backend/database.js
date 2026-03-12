@@ -191,6 +191,51 @@ db.serialize(() => {
     (4, 15.0, 1.0, 0)`, () => {
     console.log('✅ Default pricing initialized');
   });
+
+  // About info table
+  db.run(`CREATE TABLE IF NOT EXISTS about_info (
+    id INTEGER PRIMARY KEY,
+    title TEXT,
+    description TEXT,
+    mission TEXT,
+    vision TEXT,
+    features TEXT,
+    contact TEXT,
+    social_media TEXT,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  )`, () => {
+    console.log('✅ About info table ready');
+  });
+
+  // Initialize default about info
+  const defaultFeatures = JSON.stringify([
+    'Food Delivery from your favorite restaurants',
+    'Grocery Pickup and delivery service',
+    'Parcel Drop for quick deliveries',
+    'Bike Taxi for fast transportation'
+  ]);
+  const defaultContact = JSON.stringify({
+    email: 'qoxtransit@gmail.com',
+    phone: '+91 9729832025'
+  });
+  const defaultSocialMedia = JSON.stringify({
+    youtube: 'https://youtube.com/@qoxtransit',
+    instagram: 'https://www.instagram.com/qox.transit',
+    linkedin: 'https://www.linkedin.com/company/qox-transit-private-limited/'
+  });
+
+  db.run(`INSERT OR REPLACE INTO about_info (id, title, description, mission, vision, features, contact, social_media) VALUES (1, ?, ?, ?, ?, ?, ?, ?)`, 
+    [
+      'About Super Splender',
+      'Your Ultimate Super App for all daily needs',
+      'To provide convenient, reliable, and affordable services that make your life easier.',
+      'To become the most trusted super app connecting people with essential services.',
+      defaultFeatures,
+      defaultContact,
+      defaultSocialMedia
+    ], () => {
+    console.log('✅ Default about info initialized');
+  });
 });
 
 module.exports = db;

@@ -6,21 +6,21 @@ const Services = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
     const userData = localStorage.getItem('user');
+    const isLoggedIn = localStorage.getItem('isLoggedIn');
     
-    if (!token || !userData) {
-      navigate('/login');
+    if (!isLoggedIn || !userData) {
+      navigate('/enter-name');
       return;
     }
 
     setUser(JSON.parse(userData));
   }, [navigate]);
 
-  const handleLogout = () => {
-    localStorage.removeItem('token');
+  const handleBackToEntry = () => {
     localStorage.removeItem('user');
-    navigate('/login');
+    localStorage.removeItem('isLoggedIn');
+    navigate('/enter-name');
   };
 
   const services = [
@@ -62,13 +62,19 @@ const Services = () => {
         <h2>Welcome, {user.name}!</h2>
         <div>
           <button 
+            onClick={() => navigate('/about')} 
+            style={{width: 'auto', marginRight: '10px', background: '#17a2b8'}}
+          >
+            About
+          </button>
+          <button 
             onClick={() => navigate('/profile')} 
             style={{width: 'auto', marginRight: '10px', background: '#28a745'}}
           >
             Profile
           </button>
-          <button onClick={handleLogout} style={{width: 'auto', background: '#dc3545'}}>
-            Logout
+          <button onClick={handleBackToEntry} style={{width: 'auto', background: '#dc3545'}}>
+            Change Name
           </button>
         </div>
       </div>
@@ -132,15 +138,35 @@ const Services = () => {
       </div>
 
       <div style={{
-        background: '#f8f9fa',
-        padding: '20px',
+        background: '#fff3cd',
+        border: '1px solid #ffeaa7',
+        padding: '25px',
         borderRadius: '8px',
         textAlign: 'center'
       }}>
-        <h4 style={{margin: '0 0 10px 0'}}>Need Help?</h4>
-        <p style={{margin: '0', color: '#666', fontSize: '14px'}}>
-          Contact support for any assistance with our services
+        <h4 style={{margin: '0 0 15px 0', color: '#856404', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px'}}>
+          <span>🚧</span> Prototype Notice <span>🚧</span>
+        </h4>
+        <p style={{margin: '0 0 15px 0', color: '#856404', fontSize: '14px', lineHeight: '1.6'}}>
+          You are currently viewing an early prototype of the QOX Transit platform. This version is intended only to demonstrate the concept and user flow of the product.
         </p>
+        <p style={{margin: '0 0 15px 0', color: '#856404', fontSize: '14px', lineHeight: '1.6'}}>
+          <strong>Certain features may be inactive, incomplete, or simulated.</strong>
+        </p>
+        <p style={{margin: '0 0 15px 0', color: '#856404', fontSize: '14px', lineHeight: '1.6'}}>
+          Our team is working on launching the full-featured application soon.
+        </p>
+        <p style={{margin: '0 0 15px 0', color: '#856404', fontSize: '14px', lineHeight: '1.6'}}>
+          Thank you for your patience and support.
+        </p>
+        <div style={{marginTop: '20px', paddingTop: '15px', borderTop: '1px solid #ffeaa7'}}>
+          <p style={{margin: '0 0 8px 0', color: '#856404', fontSize: '14px', fontWeight: 'bold'}}>
+            We would love to hear your feedback or suggestions:
+          </p>
+          <a href="mailto:qoxtransit@gmail.com" style={{color: '#007bff', textDecoration: 'none', fontSize: '14px'}}>
+            qoxtransit@gmail.com
+          </a>
+        </div>
       </div>
     </div>
   );

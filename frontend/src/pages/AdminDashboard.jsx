@@ -77,6 +77,12 @@ const AdminDashboard = () => {
         <h2>Admin Dashboard</h2>
         <div>
           <button 
+            onClick={() => navigate('/admin/about')} 
+            style={{width: 'auto', marginRight: '10px', background: '#17a2b8'}}
+          >
+            📝 About Page
+          </button>
+          <button 
             onClick={() => navigate('/admin/pricing')} 
             style={{width: 'auto', marginRight: '10px', background: '#ff9800'}}
           >
