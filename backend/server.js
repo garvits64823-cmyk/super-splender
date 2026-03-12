@@ -537,7 +537,7 @@ app.post("/api/admin/company-info", adminAuth, (req, res) => {
 
   console.log("Updating company name to:", name.trim());
   db.run(
-    `INSERT OR REPLACE INTO company_info (id, name, logo) VALUES (1, ?, ?)`,
+    `INSERT OR REPLACE INTO company_info (id, name, logo, createdAt) VALUES (1, ?, ?, CURRENT_TIMESTAMP)`,
     [name.trim(), "/default-logo.png"],
     function (err) {
       if (err) {
@@ -545,7 +545,7 @@ app.post("/api/admin/company-info", adminAuth, (req, res) => {
         return res.status(500).json({ error: "Failed to update company info" });
       }
 
-      console.log("Company info updated successfully");
+      console.log("Company info updated successfully, changes:", this.changes);
       res.json({ message: "Company information updated successfully" });
     }
   );
