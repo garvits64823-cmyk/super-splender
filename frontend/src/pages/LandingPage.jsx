@@ -23,12 +23,16 @@ const LandingPage = () => {
 
   const fetchCompanyData = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/company-info`);
+      const response = await fetch(`${API_BASE_URL}/api/company-info?t=${Date.now()}`);
       if (response.ok) {
         const data = await response.json();
+        console.log('Company data fetched:', data);
         setCompanyData(data);
+      } else {
+        console.log('API response not ok:', response.status);
       }
     } catch (error) {
+      console.log('API error:', error);
       console.log('Using default company data');
     }
   };
